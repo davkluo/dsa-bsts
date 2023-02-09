@@ -60,15 +60,23 @@ class Node {
   /** dfsInOrder(): Traverse from the invoking node using in-order DFS.
   * Returns an array of visited nodes. */
 
-  dfsInOrder() {
+  dfsInOrder(vals = []) {
+    if (this.left) this.left.dfsInOrder(vals);
+    vals.push(this.val);
+    if (this.right) this.right.dfsInOrder(vals);
 
+    return vals;
   }
 
   /** dfsPostOrder(): Traverse from the invoking node using post-order DFS.
   * Returns an array of visited nodes. */
 
-  dfsPostOrder() {
+  dfsPostOrder(vals = []) {
+    if (this.left) this.left.dfsPostOrder(vals);
+    if (this.right) this.right.dfsPostOrder(vals);
+    vals.push(this.val);
 
+    return vals;
   }
 
 }
@@ -159,28 +167,53 @@ class BinarySearchTree {
    * Returns an array of visited nodes. */
 
   dfsInOrder() {
+    if (!this.root) return [];
 
+    return this.root.dfsInOrder();
   }
 
   /** dfsPostOrder(): Traverse the BST using post-order DFS.
    * Returns an array of visited nodes. */
 
   dfsPostOrder() {
+    if (!this.root) return [];
 
+    return this.root.dfsPostOrder();
   }
 
   /** bfs(): Traverse the BST using BFS.
    * Returns an array of visited nodes. */
 
   bfs() {
+    if (!this.root) return [];
 
+    let toVisitQueue = [this.root];
+    let nodes = [];
+
+    while (toVisitQueue.length) {
+      const current = toVisitQueue.shift();
+      nodes.push(current.val);
+
+      if (current.left) toVisitQueue.push(current.left);
+      if (current.right) toVisitQueue.push(current.right);
+    }
+
+    return nodes;
   }
 
   /** findSuccessorNode(node): Find and return node with next largest value.
    * Returns undefined if no successor. */
 
   findSuccessorNode(node) {
+    if (!node || !node.right) return;
 
+    let successor = node.right;
+
+    while (successor.left) {
+      successor = successor.left;
+    }
+
+    return successor;
   }
 
   /** Further Study!
@@ -188,7 +221,37 @@ class BinarySearchTree {
    * Returns the removed node. */
 
   remove(val) {
+    let nodeToRemove = this.root;
+    let parent = null;
 
+    while (nodeToRemove.val !== val) {
+      parent = nodeToRemove;
+      nodeToRemove = (val > nodeToRemove.val) ? nodeToRemove.right : nodeToRemove.left;
+    }
+
+    if (nodeToRemove === null) return; // Node not found
+
+    if (!nodeToRemove.left && !nodeToRemove.right) { // No children
+      if (this.root === nodeToRemove) { this.root = null; }
+      else if (parent.left === nodeToRemove) { parent.left = null; }
+      else { parent.right = null; }
+    }
+
+    else if (nodeToRemove.left && nodeToRemove.right) { // Two children
+      const successor = this.findSuccessorNode(nodeToRemove);
+      this.remove(successor.val);
+      nodeToRemove.val = successor.val;
+    }
+
+    else { // One child
+      const onlyChild = nodeToRemove.left || nodeToRemove.right;
+
+      if (this.root === nodeToRemove) { this.root = onlyChild; }
+      else if (parent.left === nodeToRemove) { parent.left = onlyChild; }
+      else { parent.right = nodeToRemove.left || nodeToRemove.right; }
+    }
+
+    return nodeToRemove;
   }
 }
 
