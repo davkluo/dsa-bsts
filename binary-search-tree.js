@@ -46,8 +46,15 @@ class Node {
   /** dfsPreOrder(): Traverse from the invoking node using pre-order DFS.
   * Returns an array of visited nodes. */
 
-  dfsPreOrder() {
+  dfsPreOrder(vals = []) {
+    vals.push(this.val);
 
+    if (!this.left && !this.right) return;
+
+    if (this.left) this.left.dfsPreOrder(vals);
+    if (this.right) this.right.dfsPreOrder(vals);
+
+    return vals;
   }
 
   /** dfsInOrder(): Traverse from the invoking node using in-order DFS.
@@ -120,7 +127,7 @@ class BinarySearchTree {
 
     let currentNode = this.root;
 
-    while(currentNode) {
+    while (currentNode) {
       if (currentNode.val === val) return currentNode;
 
       currentNode = (val > currentNode.val)
@@ -143,7 +150,9 @@ class BinarySearchTree {
    * Returns an array of visited nodes. */
 
   dfsPreOrder() {
+    if (!this.root) return [];
 
+    return this.root.dfsPreOrder();
   }
 
   /** dfsInOrder(): Traverse the BST using in-order DFS.
