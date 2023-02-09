@@ -11,7 +11,18 @@ class Node {
   * Returns the node, if found; else undefined. Uses recursion. */
 
   findRecursively(val) {
+    // base case(s)
+    if (this.val === val) return this;
 
+    // if ((val > this.val && !this.right) || (val < this.val && !this.left)) {
+    //   return undefined;
+    // }
+
+    // if (val > this.val) return this.right.findRecursively(val);
+    // if (val < this.val) return this.left.findRecursively(val);
+
+    if (val > this.val && this.right) return this.right.findRecursively(val);
+    if (val < this.val && this.left) return this.left.findRecursively(val);
   }
 
   /** insertRecursively(val): Starting at the invoking node, insert a new node
@@ -105,14 +116,27 @@ class BinarySearchTree {
    * Returns the node, if found; else undefined. Uses iteration. */
 
   find(val) {
+    if (!this.root) return;
 
+    let currentNode = this.root;
+
+    while(currentNode) {
+      if (currentNode.val === val) return currentNode;
+
+      currentNode = (val > currentNode.val)
+        ? currentNode.right
+        : currentNode.left;
+    }
+
+    return;
   }
 
   /** findRecursively(val): Search the BST for a node with value val.
    * Returns the node, if found; else undefined. Uses recursion. */
 
   findRecursively(val) {
-
+    if (!this.root) return;
+    return this.root.findRecursively(val);
   }
 
   /** dfsPreOrder(): Traverse the BST using pre-order DFS.
